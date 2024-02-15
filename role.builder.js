@@ -14,12 +14,15 @@ var roleBuilder = {
 
 	    if(creep.memory.building) {
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if(targets.length) {
+	        targets.sort();
+            if(targets.length>0) {
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }
+            }else{
+                creep.moveTo( 27,43, {visualizePathStyle: {stroke: '#ffffff'}});
             }
-            // var target = Game.getObjectById('0996812d93d8a25');
+            // var target = Game.getObjectById('e851cacb4792943');
             // if(creep.build(target) == ERR_NOT_IN_RANGE) {
             //     creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             // }
