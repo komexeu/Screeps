@@ -5,12 +5,13 @@ var roleHarvester = {
 	    if(creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
             creep.memory.harvesting = false;
             // creep.memory.target=null;
-            creep.say('🔄 harvest');
+            // creep.say('🔄 harvest');
 	    }
 	    if(!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
 	        creep.memory.harvesting = true;
-	        creep.say('🚧 build');
+	       // creep.say('🚧 build');
 	    }
+        creep.say('👷');
         
 	    if(creep.memory.harvesting) {
             // var sources = creep.room.find(FIND_SOURCES);

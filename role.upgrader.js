@@ -4,12 +4,13 @@ var roleUpgrader = {
     run: function(creep,id) {
         if(creep.memory.upgrading && creep.store.getFreeCapacity() == 0) {
             creep.memory.upgrading = false;
-            creep.say('🔄 harvest');
+            // creep.say('🔄 harvest');
 	    }
 	    if(!creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
 	        creep.memory.upgrading = true;
-	        creep.say('🚧 build');
+	       // creep.say('🚧 build');
 	    }
+        creep.say('💚');
         
 	   // if(creep.store[RESOURCE_ENERGY] == 0) {
 	   if(creep.memory.upgrading) {

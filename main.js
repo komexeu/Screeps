@@ -2,6 +2,9 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 
+var roleOuterHarvester = require('role.outer_harvester');
+var roleOuterBuilder = require('role.outer_builder');
+
 var i = 0;
 
 module.exports.loop = function () {
@@ -21,6 +24,10 @@ module.exports.loop = function () {
         console.log('upgrader1 :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader1'));
         console.log('builder :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'builder'));
         console.log('builder1 :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'builder1'));
+        console.log('outer_harvestersR :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_harvestersR'));
+        console.log('outer_harvestersL :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_harvestersL'));
+        console.log('outer_buildersL :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_buildersL'));
+        console.log('outer_buildersR :' + _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_buildersR'));
     }
 
     for(var name in Memory.creeps) {
@@ -37,38 +44,57 @@ module.exports.loop = function () {
     var upgrader1 = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader1');
     var builder = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     var builder1 = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder1');
+    var outer_harvestersR = _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_harvestersR');
+    var outer_harvestersL = _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_harvestersL');
+    var outer_buildersL = _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_buildersL');
+    var outer_buildersR = _.filter(Game.creeps, (creep) => creep.memory.role == 'outer_buildersR');
     
-    if(claimer.length < 0) {
-        Game.spawns['Mapu'].spawnCreep( [CLAIM,MOVE,MOVE],'Claimer',{ memory: { role: 'claimer' } } );
+    if(claimer.length !=0){
+       claimer = _.sortBy(claimer,(creep) => creep.ticksToLive)
+    //   console.log(claimer[0].ticksToLive)
     }
     
+    const LV0=[WORK,CARRY,MOVE,MOVE];
     const LV1=[WORK,WORK,CARRY,MOVE,MOVE];
     const LV2=[WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE];
     const LV3=[WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
     const LV4=[WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-    const CreepLV=LV4;
+    const CreepLV=LV3;
     
-    if(harvesters.length < 1) {
+    if(claimer.length < 1 || (claimer.length == 1 && claimer[0].ticksToLive < 250)) {
+        Game.spawns['Mapu'].spawnCreep( [CLAIM,MOVE],'Claimer'+ Game.time,{ memory: { role: 'claimer' } } );
+    }else if(outer_harvestersR.length < 5) {
+        var newName = 'OuterHarvestersR_' + Game.time;
+        Game.spawns['Mapu'].spawnCreep(LV4, newName,{memory: {role: 'outer_harvestersR'}});
+    }else if(harvesters.length < 1) {
         var newName = 'Harvester_' + Game.time;
-        Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'harvester'}});
-    }else if(harvesters1.length < 4) {
+        Game.spawns['Mapu'].spawnCreep(LV4, newName,{memory: {role: 'harvester'}});
+    }else if(harvesters1.length < 5) {
         var newName = 'Harvester1_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'harvester1'}});
-    }else if(upgrader.length < 4) {
+    }else if(outer_harvestersL.length < 5) {
+        var newName = 'OuterHarvestersL_' + Game.time;
+        Game.spawns['Mapu'].spawnCreep(LV4, newName,{memory: {role: 'outer_harvestersL'}});
+    }else if(upgrader.length < 1) {
         var newName = 'Upgrader_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'upgrader'}});
-    }else if(upgrader1.length < 0) {
+    }else if(upgrader1.length < 1) {
         var newName = 'Upgrader1_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'upgrader1'}});
-    }else if(builder1.length < 4) {
+    }else if(builder1.length < 2) {
         var newName = 'Builder1_' + Game.time;
-        // console.log('Spawning new harvester: ' + newName);
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'builder1'}});
-    }else if(builder.length < 1) {
+    }else if(builder.length < 4) {
         var newName = 'Builder_' + Game.time;
-        // console.log('Spawning new harvester: ' + newName);
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'builder'}});
     }
+    // else if(outer_buildersL.length<4){
+    //     var newName = 'OuterBuilderL_' + Game.time;
+    //     Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'outer_buildersL'}});
+    // }else if(outer_buildersR.length<4){
+    //     var newName = 'OuterBuilderR_' + Game.time;
+    //     Game.spawns['Mapu'].spawnCreep(CreepLV, newName,{memory: {role: 'outer_buildersR'}});
+    // }
     
     if(Game.spawns['Mapu'].spawning) { 
         var spawningCreep = Game.creeps[Game.spawns['Mapu'].spawning.name];
@@ -101,12 +127,25 @@ module.exports.loop = function () {
         if(creep.memory.role == 'builder1') {
             roleBuilder.run(creep,'f5680774d1c1fe8');
         }
+        if(creep.memory.role == 'outer_harvestersR') {
+            roleOuterHarvester.run(creep,'2484077468064e9','W2N8','W1N8','🐛1');
+        }
+        if(creep.memory.role == 'outer_harvestersL') {
+            roleOuterHarvester.run(creep,'ad7c07746802348','W2N8','W1N8','🐛2');
+        }
+        if(creep.memory.role == 'outer_buildersL') {
+            roleOuterBuilder.run(creep,'2484077468064e9','W2N8','W1N8','🐛🚧1');
+        }
+        if(creep.memory.role == 'outer_buildersR') {
+            roleOuterBuilder.run(creep,'ad7c07746802348','W2N8','W1N8','🐛🚧2');
+        }
         
         if(creep.memory.role=='claimer'){
-            if (creep.room.name !== 'W2N8'){
-                creep.moveTo(new RoomPosition(28, 44, 'W2N8'),{visualizePathStyle: {stroke: '#ffffff'}});
-            }else{
-                let rs=creep.claimController(creep.room.controller) ;
+            creep.say('🚩')
+            creep.moveTo(new RoomPosition(28, 44, 'W2N8'),{visualizePathStyle: {stroke: '#ffffff'}});
+            if (creep.room.name == 'W2N8'){
+                // let rs=creep.claimController(creep.room.controller) ;
+                let rs=creep.reserveController(creep.room.controller) ;
                 // console.log(rs)
                 if(rs== ERR_NOT_IN_RANGE) {
                     creep.moveTo(creep.room.controller);
