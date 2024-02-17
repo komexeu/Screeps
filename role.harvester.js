@@ -41,8 +41,20 @@ var roleHarvester = {
                     creep.moveTo( targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }else{
-                creep.moveTo( 20,32, {visualizePathStyle: {stroke: '#ffffff'}});
-                // creep.memory.target=null;
+                // creep.moveTo( 20,32, {visualizePathStyle: {stroke: '#ffffff'}});
+                if(creep.memory.role == 'harvester'){
+                    if(_.filter(Game.creeps, (creep) => creep.memory.role == 'builder').length > 4){
+                        
+                    }else{
+                        creep.memory.role = 'builder';
+                    }
+                }else{
+                    if(_.filter(Game.creeps, (creep) => creep.memory.role == 'builder1').length > 4){
+                        
+                    }else{
+                        creep.memory.role = 'builder1';
+                    }
+                }
             }
         }
 	}

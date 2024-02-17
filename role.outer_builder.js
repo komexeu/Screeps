@@ -13,34 +13,47 @@ var outer_builder = {
 	    creep.say(sayWord);
 
 	    if(creep.memory.building) {
-	        if (creep.room.name != homeName){
-                 creep.moveTo(new RoomPosition(1, 18, homeName),{visualizePathStyle: {stroke: '#ffaa00'}});
-            }else{
+	       // if (creep.room.name != homeName){
+        //          creep.moveTo(new RoomPosition(1, 18, homeName),{visualizePathStyle: {stroke: '#ffaa00'}});
+        //     }else
+            {
     	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES, {
-                    filter: (site) => site.structureType === STRUCTURE_EXTENSION 
+                    filter: (site) => site.structureType === STRUCTURE_ROAD
+                    // && site.id!='1cf62df2f8d640a'
                 });
                 if(targets.length==0){
-                    targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+                    targets = creep.room.find(FIND_CONSTRUCTION_SITES 
+                    // , {
+                    //     filter: (site) => site.x>32
+                    // }
+                    );
                 }
-    	        targets.sort();
+                // console.log(targets[0])
+    	        targets.sort((a, b) => {
+                    if (a.pos.x !== b.pos.x) {
+                        return b.pos.x - a.pos.x;
+                    }
+                    return a.id.localeCompare(b.id);
+                });
     	        
                 if(targets.length>0) {
                     if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     }
                 }else{
-                    // 修復
-                    var roadsToRepair = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => structure.structureType === STRUCTURE_ROAD && structure.hits < structure.hitsMax
+                    if (creep.room.name != homeName){
+                         creep.moveTo(new RoomPosition(1, 18, homeName),{visualizePathStyle: {stroke: '#ffaa00'}});
+                         return;
+                    }
+                    // 放進container
+                    let containers = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
                     });
-                    roadsToRepair.sort()
-                    console.log(roadsToRepair.length)
-                    if(roadsToRepair.length > 0){
-                        //  console.log(roadsToRepair[0])
-                        creep.moveTo(roadsToRepair[0], {visualizePathStyle: {stroke: '#ff0000'}});
-                        let repsreRS = creep.repair(roadsToRepair[0]);
-                        console.log(repsreRS)
-                        // console.log(roadToRepare[0] +" Repare" + creep.pos.x + ","  + creep.pos.y + ">" + repsreRS)
+                    containers.sort()
+                    if(containers.length > 0){
+                        creep.moveTo(containers[0], {visualizePathStyle: {stroke: '#7777ff'}})
+                       let rs= creep.transfer(containers[0], RESOURCE_ENERGY);
+                    //   console.log(rs)
                     }else{
                         creep.moveTo(27,43, {visualizePathStyle: {stroke: '#ff0000'}});
                     }

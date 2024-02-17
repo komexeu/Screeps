@@ -39,9 +39,17 @@ var outer_harvester = {
                 }else{
                     creep.moveTo( new RoomPosition(20, 32, homeName), {visualizePathStyle: {stroke: '#ffffff'}});
                     if(creep.memory.role == 'outer_harvestersR'){
-                        creep.memory.role = 'outer_buildersR';
+                        if(_.filter(Game.creeps, (creep) => creep.memory.role == 'outer_buildersR').length > 4){
+                            
+                        }else{
+                            creep.memory.role = 'outer_buildersR';
+                        }
                     }else{
-                        creep.memory.role = 'outer_buildersL';
+                        if(_.filter(Game.creeps, (creep) => creep.memory.role == 'outer_buildersL').length > 4){
+                            
+                        }else{
+                            creep.memory.role = 'outer_buildersL';
+                        }
                     }
                 }
             }

@@ -1,3 +1,4 @@
+
 var roleBuilder = {
 
     /** @param {Creep} creep **/
@@ -29,18 +30,17 @@ var roleBuilder = {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }
             }else{
-                // 修復
-                var roadsToRepair = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => structure.structureType === STRUCTURE_ROAD && structure.hits < structure.hitsMax
+               // 放進container
+                let containers = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE )
+                    // || structure.structureType === RESOURCE_ENERGY
+                    && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
                 });
-                roadsToRepair.sort()
-                console.log(roadsToRepair.length)
-                if(roadsToRepair.length > 0){
-                    //  console.log(roadsToRepair[0])
-                    creep.moveTo(roadsToRepair[0], {visualizePathStyle: {stroke: '#ff0000'}});
-                    let repsreRS = creep.repair(roadsToRepair[0]);
-                    console.log(repsreRS)
-                    // console.log(roadToRepare[0] +" Repare" + creep.pos.x + ","  + creep.pos.y + ">" + repsreRS)
+                console.log(containers.length)
+                containers.sort((a,b)=>b.hitsMax - a.hitsMax)
+                if(containers.length > 0){
+                    creep.moveTo(containers[0], {visualizePathStyle: {stroke: '#7777ff'}})
+                    creep.transfer(containers[0], RESOURCE_ENERGY);
                 }else{
                     creep.moveTo(27,43, {visualizePathStyle: {stroke: '#ff0000'}});
                 }
