@@ -54,17 +54,11 @@ module.exports.loop = function () {
     Game.spawns['Mapu'].room.visual.text('🚑️: ' + healther.filter(x => x.memory.targetRoom == 'W2N8').length, 5, 9, { align: 'left', opacity: 0.8 });
     Game.spawns['Mapu'].room.visual.text('🚩: ' + claimer.filter(x => x.memory.targetRoom == 'W2N8').length, 5, 10, { align: 'left', opacity: 0.8 });
 
-    Game.spawns['Mapu'].room.visual.text('👷: ' + _.filter(new_harvester, x => x.memory.sourceRoom == 'W3N8').length, 15, 3, { align: 'left', opacity: 0.8 });
-    // Game.spawns['Mapu'].room.visual.text('🐛👷R: ' + outer_harvestersR.length, 10, 4, { align: 'left', opacity: 0.8 });
-    // Game.spawns['Mapu'].room.visual.text('🐛🚧L: ' + outer_buildersL.length, 10, 5, { align: 'left', opacity: 0.8 });
-    // Game.spawns['Mapu'].room.visual.text('🐛🚧R: ' + outer_buildersR.length, 10, 6, { align: 'left', opacity: 0.8 });
-    // Game.spawns['Mapu'].room.visual.text('🔨: ' + repairerw2n8.length, 10, 7, { align: 'left', opacity: 0.8 });
-    // Game.spawns['Mapu'].room.visual.text('🚀: ' + _.filter(attacker, x => x.memory.targetRoom == 'W2N8').length, 10, 8, { align: 'left', opacity: 0.8 });
-    // Game.spawns['Mapu'].room.visual.text('🚑️: ' + healther.filter(x => x.memory.targetRoom == 'W2N8').length, 10, 9, { align: 'left', opacity: 0.8 });
+    Game.spawns['Mapu'].room.visual.text('👷: ' + _.filter(new_harvester, x => x.memory.sourceRoom == 'W3N8' && x.memory.sourceId == '9d330774017e6b9').length, 15, 3, { align: 'left', opacity: 0.8 });
+    Game.spawns['Mapu'].room.visual.text('👷: ' + _.filter(new_harvester, x => x.memory.sourceRoom == 'W3N8' && x.memory.sourceId == 'ebdd0774017409d').length, 15, 4, { align: 'left', opacity: 0.8 });
     Game.spawns['Mapu'].room.visual.text('🚩: ' + claimer.filter(x => x.memory.targetRoom == 'W2N9').length, 10, 10, { align: 'left', opacity: 0.8 });
 
     Game.spawns['Mapu'].room.visual.text('🚩: ' + claimer.filter(x => x.memory.targetRoom == 'W3N8').length, 15, 10, { align: 'left', opacity: 0.8 });
-
 
     for (var name in Memory.creeps) {
         if (!Game.creeps[name]) {
@@ -131,41 +125,66 @@ module.exports.loop = function () {
     let claimerw3n8 = claimer.filter(x => x.memory.targetRoom == 'W3N8');
     let claimerw2n9 = claimer.filter(x => x.memory.targetRoom == 'W2N9');
 
+    let centerLevel = 0;
+
     if (harvesters1.length < 6) {
+        centerLevel = 1;
         var newName = '👷R_' + Game.time;
-        Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'harvester1', targetRoom: 'W1N8', sourceRoom: 'W1N8', sourceId: 'ab9e0774d1c107c' } });
+        Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'harvester1', targetRoom: 'W1N8', sourceRoom: 'W1N8', sourceId: 'f5680774d1c1fe8' } });
     }
     else if (claimerw2n8.length < 1 || (claimerw2n8.length == 1 && claimerw2n8[0].ticksToLive < 150)) {
+        centerLevel = 2;
         Game.spawns['Mapu'].spawnCreep([CLAIM, MOVE], '🚩_' + Game.time, { memory: { role: 'claimer', targetRoom: 'W2N8' } });
     }
     else if (claimerw3n8.length < 1 || (claimerw3n8.length == 1 && claimerw2n8[0].ticksToLive < 150)) {
+        centerLevel = 3;
         Game.spawns['Mapu'].spawnCreep([CLAIM, MOVE], '🚩_' + Game.time, { memory: { role: 'claimer', targetRoom: 'W3N8' } });
     }
     // else if (claimerw2n9.length < 1 || (claimerw2n9.length == 1 && claimerw2n9[0].ticksToLive < 150)) {
     //     Game.spawns['Mapu'].spawnCreep([CLAIM, MOVE], '🚩_' + Game.time, { memory: { role: 'claimer', targetRoom: 'W2N9' } });
     // } 
     else if (upgrader1.length < 1) {
+        centerLevel = 4;
         var newName = '⬆️_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(LV0, newName, { memory: { role: 'upgrader1', targetRoom: 'W1N8', sourceRoom: 'W1N8', sourceId: 'f5680774d1c1fe8' } });
     } else if (repairerw2n8.length < 1) {
+        centerLevel = 5;
         var newName = '🔨w2n8_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(LV1200, newName, { memory: { role: 'repairerw2n8', targetRoom: 'W2N8', sourceRoom: 'W1N8' } });
-    } else if (outer_harvestersR.length < 5) {
+    }
+    //  new_harvester    
+    else if (outer_harvestersR.length < 7) {
+        centerLevel = 6;
         var newName = '🐛👷R_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'outer_harvestersR', targetRoom: 'W1N8', sourceRoom: 'W2N8', sourceId: '2484077468064e9' } });
-    } else if (outer_harvestersL.length < 5) {
+    } else if (outer_harvestersL.length < 8) {
+        centerLevel = 7;
         var newName = '🐛👷L_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'outer_harvestersL', targetRoom: 'W1N8', sourceRoom: 'W2N8', sourceId: 'ad7c07746802348' } });
-    } else if (new_harvester.length < 5) {
+    }
+    else if (_.filter(new_harvester, x => x.memory.sourceRoom == 'W3N8' && x.memory.sourceId == '9d330774017e6b9').length < 1) {
+        centerLevel = 8;
         var newName = '👷_' + Game.time;
-        Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'new_harvester', targetRoom: 'W1N8', sourceRoom: 'W3N8', sourceId: '9d330774017e6b9' } });
-    } else if (harvesters.length < 5) {
+        Game.spawns['Mapu'].spawnCreep(LV1200, newName, { memory: { role: 'new_harvester', targetRoom: 'W1N8', sourceRoom: 'W3N8', sourceId: '9d330774017e6b9' } });
+    }
+    else if (_.filter(new_harvester, x => x.memory.sourceRoom == 'W3N8' && x.memory.sourceId == 'ebdd0774017409d').length < 1) {
+        centerLevel = 9;
+        var newName = '👷_' + Game.time;
+        Game.spawns['Mapu'].spawnCreep(LV1200, newName, { memory: { role: 'new_harvester', targetRoom: 'W1N8', sourceRoom: 'W3N8', sourceId: 'ebdd0774017409d' } });
+    }
+    else if (harvesters.length < 5) {
+        centerLevel = 10;
         var newName = '👷_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'harvester', targetRoom: 'W1N8', sourceRoom: 'W1N8', sourceId: 'ab9e0774d1c107c' } });
-    } else if (repairer.length < 3) {
+    }
+    //  new_harvester
+
+    else if (repairer.length < 3) {
+        centerLevel = 11;
         var newName = '🔨_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(LV1200, newName, { memory: { role: 'repairer', targetRoom: 'W1N8', sourceRoom: 'W1N8' } });
     } else if (upgrader.length < 2) {
+        centerLevel = 12;
         var newName = '⬆️_' + Game.time;
         Game.spawns['Mapu'].spawnCreep(CreepLV, newName, { memory: { role: 'upgrader', targetRoom: 'W1N8', sourceRoom: 'W1N8' } });
     }
@@ -179,6 +198,7 @@ module.exports.loop = function () {
             Game.spawns['Mapu'].pos.y,
             { align: 'left', opacity: 0.8 });
     }
+    Game.spawns['Mapu'].room.visual.text('🛠️CenterLV :  ' + centerLevel, 40, 5, { align: 'left', opacity: 0.8 });
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -198,19 +218,23 @@ module.exports.loop = function () {
         }
 
         if (creep.memory.role == 'harvester1') {
-            roleHarvester.run(creep, 'f5680774d1c1fe8');
+            roleHarvester.run(creep, creep.memory.sourceId);
         }
         if (creep.memory.role == 'harvester') {
-            roleHarvester.run(creep, 'ab9e0774d1c107c');
+            roleHarvester.run(creep, creep.memory.sourceId);
         }
         if (creep.memory.role == 'outer_harvestersR') {
-            roleOuterHarvester.run(creep, '2484077468064e9');
+            roleOuterHarvester.run(creep, creep.memory.sourceId);
         }
         if (creep.memory.role == 'outer_harvestersL') {
-            roleOuterHarvester.run(creep, 'ad7c07746802348');
+            roleOuterHarvester.run(creep, creep.memory.sourceId);
         }
         if (creep.memory.role == 'new_harvester') {
             roleOuterHarvester.run(creep, creep.memory.sourceId);
+            if(creep.memory.sourceId=='68050773313e4cb'){
+            //    var rs= creep.moveTo(new RoomPosition(19, 5, creep.memory.sourceRoom), { visualizePathStyle: { stroke: '#ff00ff' } });
+            //    console.log(rs)
+            }
         }
 
 
@@ -259,10 +283,11 @@ module.exports.loop = function () {
                 // let rs=creep.claimController(creep.room.controller) ;
                 let rs = creep.reserveController(creep.room.controller);
                 if (rs == ERR_NOT_IN_RANGE) {
-                    // 卡路徑BUG
-                    if (creep.pos.x != 31 && creep.pos.y != 20 && creep.pos.x > 31 && creep.memory.targetRoom == 'W2N8') {
-                        creep.moveTo(new RoomPosition(31, 20, 'W2N8'), { visualizePathStyle: { stroke: '#ff00ff' } });
-                    } else {
+                    // // 卡路徑BUG
+                    // if (creep.pos.x != 31 && creep.pos.y != 20 && creep.pos.x > 31 && creep.memory.targetRoom == 'W2N8') {
+                    //     creep.moveTo(new RoomPosition(31, 20, 'W2N8'), { visualizePathStyle: { stroke: '#ff00ff' } });
+                    // } else
+                    {
                         creep.moveTo(creep.room.controller);
                     }
                 }

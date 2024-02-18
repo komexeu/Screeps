@@ -1,7 +1,7 @@
 var outer_harvester = {
 
     /** @param {Creep} creep **/
-    run: function (creep, id, roomName, homeName, sayWord) {
+    run: function (creep, id) {
         if (creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
             creep.memory.harvesting = false;
             // creep.memory.target=null;
@@ -12,22 +12,25 @@ var outer_harvester = {
             creep.say('🚧 build');
         }
 
-        // creep.say(creep.memory.targetRoom)
+        // creep.say(creep.memory.harvesting)
 
         if (creep.memory.harvesting) {
             var sources = Game.getObjectById(id)
-            if (creep.room.name != creep.memory.sourceRoom ) {
+            if (creep.room.name != creep.memory.sourceRoom) {
                 creep.say(creep.memory.sourceRoom)
             }
-            if (creep.harvest(sources) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources, { visualizePathStyle: { stroke: '#ffaa00' } });
+            var rs=creep.harvest(sources);
+            if (rs == ERR_NOT_IN_RANGE) {
+                creep.moveTo(new RoomPosition(sources.pos.x, sources.pos.y, creep.memory.sourceRoom), { visualizePathStyle: { stroke: '#ffaa00' } });
+            }else{
+                // console.log(rs)
             }
         }
         else {
             // if (creep.room.name != creep.memory.homeRoom){
             //      creep.moveTo(new RoomPosition(1, 18, creep.room.homeRoom),{visualizePathStyle: {stroke: '#ffffff'}});
             // }
-            if (creep.room.name != creep.memory.targetRoom ) {
+            if (creep.room.name != creep.memory.targetRoom) {
                 creep.say(creep.memory.targetRoom)
                 creep.moveTo(new RoomPosition(1, 18, creep.memory.targetRoom), { visualizePathStyle: { stroke: '#ffffff' } });
             }
@@ -45,8 +48,11 @@ var outer_harvester = {
                     return b.pos.y - a.pos.y
                 });
                 if (targets.length > 0) {
-                    if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } });
+                    var rs = creep.transfer(targets[0], RESOURCE_ENERGY);
+                    if (rs == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(new RoomPosition(targets[0].pos.x, targets[0].pos.y, creep.memory.targetRoom), { visualizePathStyle: { stroke: '#ffffff' } });
+                    } else {
+                        console.log(rs)
                     }
                 } else {
                     creep.moveTo(new RoomPosition(20, 32, creep.memory.targetRoom), { visualizePathStyle: { stroke: '#ffffff' } });
