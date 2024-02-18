@@ -36,9 +36,10 @@ var roleBuilder = {
                     // || structure.structureType === RESOURCE_ENERGY
                     && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
                 });
-                console.log(containers.length)
+                // console.log(containers.length)
                 containers.sort((a,b)=>b.hitsMax - a.hitsMax)
                 if(containers.length > 0){
+                    creep.say('⚡️');
                     creep.moveTo(containers[0], {visualizePathStyle: {stroke: '#7777ff'}})
                     creep.transfer(containers[0], RESOURCE_ENERGY);
                 }else{

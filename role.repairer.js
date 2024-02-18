@@ -14,7 +14,7 @@ var roleRepairer = {
 	       // console.log('change to true')
 	        creep.memory.repairing = true;
 	    }
-        creep.say('🔨');
+        // creep.say('🔨');
         
 	   if(creep.memory.repairing) {
 	        if(creep.room.name!=targetRoom)
@@ -24,34 +24,49 @@ var roleRepairer = {
 	        }
 	       
             if(!creep.memory.fixingTargetId){
-    	        // 修復
-                var roadsToRepair = creep.room.find(FIND_STRUCTURES, {
-                      filter: structure => structure.hits < structure.hitsMax * 0.9
-                        // && structure.structureType === STRUCTURE_ROAD 
+                //能量補充
+                var targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return ( structure.structureType == STRUCTURE_TOWER) 
+                        && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+                    }
                 });
-                roadsToRepair.sort((a, b) => {
-                    // if(a.structureType !== b.structureType ){
-                    //     return a.structureType.localeCompare(b.structureType)
-                    // }
-                    if (a.hits !== b.hits) {
-                        return a.hits/a.hitsMax - b.hits/b.hitsMax;
+                targets.sort();
+                if(targets.length > 0) {
+                    if(creep.transfer(targets[0] , RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo( targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     }
+                }else{ 
+                    // 修復
+                    var roadsToRepair = creep.room.find(FIND_STRUCTURES, {
+                            filter: structure => structure.hits < structure.hitsMax * 0.9
+                            // && structure.structureType === STRUCTURE_ROAD 
+                            && structure.structureType !== STRUCTURE_WALL 
+                    });
+                    roadsToRepair.sort((a, b) => {
+                        // if(a.structureType !== b.structureType ){
+                        //     return a.structureType.localeCompare(b.structureType)
+                        // }
+                        if (a.hits !== b.hits) {
+                            return a.hits/a.hitsMax - b.hits/b.hitsMax;
+                        }
+                        
+                        if (a.pos.y !== b.pos.y) {
+                            return b.pos.y - a.pos.y;
+                        }
+                        
+                        // return a.id.localeCompare(b.id);
+                        return b.pos.x - a.pos.x;
+                    });
                     
-                    if (a.pos.y !== b.pos.y) {
-                        return b.pos.y - a.pos.y;
+                    if(roadsToRepair.length > 0){
+                        creep.memory.fixingTargetId = roadsToRepair[0].id;
+                        let repsreRS = creep.repair(roadsToRepair[0]);
+                        if(repsreRS==ERR_NOT_IN_RANGE){
+                            creep.moveTo(roadsToRepair[0], {visualizePathStyle: {stroke: '#ff0000'}});
+                        }
+                        // console.log(repsreRS)
                     }
-                    
-                    // return a.id.localeCompare(b.id);
-                    return b.pos.x - a.pos.x;
-                });
-                
-                if(roadsToRepair.length > 0){
-                    creep.memory.fixingTargetId = roadsToRepair[0].id;
-                    let repsreRS = creep.repair(roadsToRepair[0]);
-                    if(repsreRS==ERR_NOT_IN_RANGE){
-                        creep.moveTo(roadsToRepair[0], {visualizePathStyle: {stroke: '#ff0000'}});
-                    }
-                    // console.log(repsreRS)
                 }
             }
             else{
@@ -69,7 +84,7 @@ var roleRepairer = {
                                 //  if(creep.id=='63f0790273953ff')
                                 // {console.log('OK:' + target.hits +' ID>' + target.id)}
                              }else{
-                                console.log('Repair ERROR:' + repsreRS + 'pos>' + target.pos.x  +',' + target.pos.y)
+                                // console.log('Repair ERROR:' + repsreRS + 'pos>' + target.pos.x  +',' + target.pos.y)
                              }
                          }
                     
@@ -102,7 +117,7 @@ var roleRepairer = {
                 if(rs === ERR_NOT_IN_RANGE){
                     creep.moveTo(targets[0].pos);
                 }
-                else if (rs === OK) {
+                else if (rs === OK || rs === ERR_BUSY) {
                     
                 } else {
                     console.log(`withdraw失敗，ERROR Code: ${rs},pos:${targets[0].pos}`);

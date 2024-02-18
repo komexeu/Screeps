@@ -10,7 +10,7 @@ var roleUpgrader = {
 	        creep.memory.upgrading = true;
 	       // creep.say('🚧 build');
 	    }
-        creep.say('💚');
+        // creep.say('💚');
         
 	   // if(creep.store[RESOURCE_ENERGY] == 0) {
 	   if(creep.memory.upgrading) {

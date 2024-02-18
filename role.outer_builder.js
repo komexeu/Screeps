@@ -51,6 +51,7 @@ var outer_builder = {
                     });
                     containers.sort()
                     if(containers.length > 0){
+                        creep.say('⚡️');
                         creep.moveTo(containers[0], {visualizePathStyle: {stroke: '#7777ff'}})
                        let rs= creep.transfer(containers[0], RESOURCE_ENERGY);
                     //   console.log(rs)
